@@ -9,5 +9,11 @@ const zIndex = ref(100)
 <template>
   <main font-sans p="x-4 y-10" text="center gray-700 dark:gray-200">
     <vitar :show-mesh="showMesh" :z-index="zIndex" :show-cam="showCam" :model="model" :real-time="realTime" />
+    <button @click="showCam = !showCam">
+      show camera
+    </button>
+    <button @click="showMesh = !showMesh">
+      show mesh
+    </button>
   </main>
 </template>

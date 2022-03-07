@@ -250,7 +250,7 @@ async function initMediapipe() {
   const canvasCtx = guideCanvas.value!.getContext('2d')
   canvasCtx!.clearRect(0, 0, guideCanvas.value!.width, guideCanvas.value!.height)
   guideCanvas.value!.style.visibility = props.showMesh ? 'inline' : 'none'
-  camView.value!.style.visibility = props.showCam ? 'visible' : 'invisible'
+  camView.value!.style.visibility = props.showCam ? 'visible' : 'hidden'
 
   const faceMesh = new mpFaceMesh.FaceMesh({
     locateFile: (file) => {
@@ -291,6 +291,19 @@ function fixPosition() {
     position.value.y = 0
 }
 
+watch(() => props.showCam, () => {
+  if (props.realTime)
+    camView.value!.style.visibility = props.showCam ? 'visible' : 'hidden'
+})
+
+watch(() => props.showMesh, () => {
+  if (props.realTime) {
+    const canvasCtx = guideCanvas.value!.getContext('2d')
+    canvasCtx!.clearRect(0, 0, guideCanvas.value!.width, guideCanvas.value!.height)
+    guideCanvas.value!.style.visibility = props.showMesh ? 'inline' : 'none'
+  }
+})
+
 useEventListener('resize', fixPosition)
 
 onMounted(async() => {
@@ -327,7 +340,7 @@ onMounted(async() => {
       style="transform: rotateY(180deg);"
       :style="[frameStyle, {right: `${size}px`}]"
     >
-      <video ref="camView" class="absolute bottom-0 left-0 w-full h-auto invisible" />
+      <video ref="camView" class="absolute bottom-0 left-0 w-full h-auto" />
       <canvas ref="guideCanvas" class="absolute bottom-0 left-0 w-full h-auto" />
     </div>
   </div>
