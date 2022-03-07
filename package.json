@@ -1,6 +1,6 @@
 {
   "name": "@cloudgeek/vitar",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "private": false,
   "description": "Live real-time avatar",
   "bugs": "https://github.com/LarchLiu/vitar/issues",
@@ -53,6 +53,12 @@
     "vue-tsc": "^0.32.1",
     "zx": "^5.2.0"
   },
-  "keywords": ["vue", "avatar", "vue-avatar", "live-avatar", "real-time"],
+  "keywords": [
+    "vue",
+    "avatar",
+    "vue-avatar",
+    "live-avatar",
+    "real-time"
+  ],
   "license": "MIT"
 }
