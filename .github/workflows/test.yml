@@ -1,0 +1,51 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+  pull_request:
+    branches:
+      - main
+      - master
+
+jobs:
+  test:
+    timeout-minutes: 10
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        node-version: [14.x]
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        # os: [ubuntu-latest, macos-latest]
+      fail-fast: false
+
+    steps:
+      - name: Set git to use LF
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.eol lf
+
+      - uses: actions/checkout@v2
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Setup
+        run: npm i -g pnpm @antfu/ni
+
+      - name: Install
+        run: nci
+        env:
+          CYPRESS_INSTALL_BINARY: 0
+
+      - name: Build
+        run: nr build
+
+      - name: Test
+        run: nr test

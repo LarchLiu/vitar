@@ -1,0 +1,58 @@
+{
+  "name": "@cloudgeek/vitar",
+  "version": "0.0.0",
+  "private": false,
+  "description": "Live real-time avatar",
+  "bugs": "https://github.com/LarchLiu/vitar/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LarchLiu/vitar.git"
+  },
+  "author": "alex <larch.liu@gmail.com>",
+  "scripts": {
+    "ci:publish": "zx scripts/publish.mjs",
+    "dev": "vite --port 3333 --open",
+    "build": "vite build && vue-tsc --emitDeclarationOnly && mv dist/lib dist/types && rm -r dist/test && rm -r dist/src",
+    "lint": "eslint . --ext=.ts,.vue",
+    "prepublishOnly": "npm run build",
+    "release": "zx scripts/release.mjs",
+    "test": "vitest"
+  },
+  "main": "dist/vitar.umd.js",
+  "module": "dist/vitar.es.js",
+  "files": [
+    "dist"
+  ],
+  "types": "./dist/types/index.d.ts",
+  "style": "./dist/index.css",
+  "dependencies": {
+    "@mediapipe/camera_utils": "^0.3.1632432234",
+    "@mediapipe/drawing_utils": "^0.3.1620248257",
+    "@mediapipe/face_mesh": "^0.4.1633559619",
+    "@vueuse/core": "^7.7.0",
+    "kalidokit": "^1.1.5",
+    "pixi-live2d-display": "^0.3.1",
+    "pixi.js": "^6.2.2"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^0.16.1",
+    "@types/node": "^17.0.21",
+    "@unocss/reset": "^0.27.2",
+    "@vitejs/plugin-vue": "^2.2.2",
+    "@vue/test-utils": "^2.0.0-rc.18",
+    "bumpp": "^7.1.1",
+    "eslint": "^8.10.0",
+    "jsdom": "^19.0.0",
+    "pnpm": "^6.32.3",
+    "typescript": "^4.5.5",
+    "unocss": "^0.27.2",
+    "unplugin-auto-import": "^0.6.1",
+    "vite": "^2.8.4",
+    "vitest": "^0.5.7",
+    "vue": "^3.2.31",
+    "vue-tsc": "^0.32.1",
+    "zx": "^5.2.0"
+  },
+  "keywords": ["vue", "avatar", "vue-avatar", "live-avatar", "real-time"],
+  "license": "MIT"
+}
