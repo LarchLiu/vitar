@@ -34,59 +34,75 @@ const props = defineProps({
 })
 const isDev = import.meta.env.MODE === 'development'
 
-if (props.realTime && !isDev && (!(window as any).FaceMesh || !(window as any).Camera || !(window as any).drawConnectors)) {
-  useScriptTag(
-    'https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js',
-    () => {
-      isFaceMeshLoad.value = true
-    },
-    { async: true, crossOrigin: 'anonymous' },
-  )
-  useScriptTag(
-    'https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js',
-    () => {
-      isCameraUtilsLoad.value = true
-    },
-    { async: true, crossOrigin: 'anonymous' },
-  )
-  useScriptTag(
-    'https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js',
-    () => {
-      isDrawiingUtilsLoad.value = true
-    },
-    { async: true, crossOrigin: 'anonymous' },
-  )
-}
-else {
-  isFaceMeshLoad.value = true
-  isCameraUtilsLoad.value = true
-  isDrawiingUtilsLoad.value = true
+const vm = getCurrentInstance()!
+
+async function create() {
+  if (props.realTime || props.model)
+    import('./Live2D.vue').then(v => Live2DLayer.value = v.default)
 }
 
-if (props.model && (!(window as any).Live2D || !(window as any).Live2DCubismCore)) {
-  useScriptTag(
-    '/js/live2d.min.js',
-    () => {
-      isLive2dLoad.value = true
-    },
-    { async: true },
-  )
-  useScriptTag(
-    '/js/live2dcubismcore.min.js',
-    () => {
-      isCubismLoad.value = true
-    },
-    { async: true },
-  )
+if (props.realTime && (window as any).FaceMesh && (window as any).Camera && (window as any).drawConnectors && (window as any).Live2D && (window as any).Live2DCubismCore) {
+  onMounted(create)
 }
 else {
-  isLive2dLoad.value = true
-  isCubismLoad.value = true
+  if (props.realTime && !isDev && (!(window as any).FaceMesh || !(window as any).Camera || !(window as any).drawConnectors)) {
+    useScriptTag(
+      'https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js',
+      () => {
+        isFaceMeshLoad.value = true
+      },
+      { async: true, crossOrigin: 'anonymous' },
+    )
+    useScriptTag(
+      'https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js',
+      () => {
+        isCameraUtilsLoad.value = true
+      },
+      { async: true, crossOrigin: 'anonymous' },
+    )
+    useScriptTag(
+      'https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js',
+      () => {
+        isDrawiingUtilsLoad.value = true
+      },
+      { async: true, crossOrigin: 'anonymous' },
+    )
+  }
+  else {
+    isFaceMeshLoad.value = true
+    isCameraUtilsLoad.value = true
+    isDrawiingUtilsLoad.value = true
+  }
+
+  if (!(window as any).Live2D || !(window as any).Live2DCubismCore) {
+    useScriptTag(
+      'https://cdn.jsdelivr.net/gh/dylanNew/live2d/webgl/Live2D/lib/live2d.min.js',
+      () => {
+        isLive2dLoad.value = true
+      },
+      { async: true },
+    )
+    useScriptTag(
+      'https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js',
+      () => {
+        isCubismLoad.value = true
+      },
+      { async: true },
+    )
+  }
+  else {
+    isLive2dLoad.value = true
+    isCubismLoad.value = true
+  }
 }
 
 watch([isLive2dLoad, isCubismLoad, isFaceMeshLoad, isCameraUtilsLoad, isDrawiingUtilsLoad], () => {
-  if (isLive2dLoad.value && isCubismLoad.value && isFaceMeshLoad.value && isCameraUtilsLoad.value && isDrawiingUtilsLoad.value && !Live2DLayer.value)
-    import('./Live2D.vue').then(v => Live2DLayer.value = v.default)
+  if (isLive2dLoad.value && isCubismLoad.value && isFaceMeshLoad.value && isCameraUtilsLoad.value && isDrawiingUtilsLoad.value && !Live2DLayer.value) {
+    if (vm.isMounted)
+      create()
+    else
+      onMounted(create, vm)
+  }
 })
 </script>
 

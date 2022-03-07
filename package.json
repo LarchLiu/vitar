@@ -1,6 +1,6 @@
 {
   "name": "@cloudgeek/vitar",
-  "version": "0.0.1",
+  "version": "0.0.0",
   "private": false,
   "description": "Live real-time avatar",
   "bugs": "https://github.com/LarchLiu/vitar/issues",
@@ -18,7 +18,7 @@
     "release": "zx scripts/release.mjs",
     "test": "vitest"
   },
-  "main": "dist/vitar.umd.js",
+  "main": "dist/vitar.cjs.js",
   "module": "dist/vitar.es.js",
   "files": [
     "dist"

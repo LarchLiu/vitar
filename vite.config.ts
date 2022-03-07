@@ -34,7 +34,7 @@ export default defineConfig({
     lib: {
       entry: path.resolve(__dirname, 'lib/index.ts'),
       name: 'Vitar',
-      // formats: ['cjs', 'es'],
+      formats: ['cjs', 'es'],
     },
     rollupOptions: {
       external: [
@@ -44,7 +44,7 @@ export default defineConfig({
         '@mediapipe/drawing_utils',
       ],
       output: {
-        inlineDynamicImports: true,
+        inlineDynamicImports: false,
         exports: 'named',
         globals: {
           vue: 'Vue',
