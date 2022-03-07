@@ -4,7 +4,8 @@ import { Application } from '@pixi/app'
 import { Renderer } from '@pixi/core'
 import { Ticker, TickerPlugin } from '@pixi/ticker'
 import { InteractionManager } from '@pixi/interaction'
-import * as Kalidokit from 'kalidokit'
+import type { TFace } from 'kalidokit'
+import { Face, Vector } from 'kalidokit'
 import type * as c from '@mediapipe/camera_utils'
 import type * as d from '@mediapipe/drawing_utils'
 import type * as f from '@mediapipe/face_mesh'
@@ -25,10 +26,7 @@ const props = defineProps({
   zIndex: Number,
 })
 
-const {
-  Face,
-  Vector: { lerp },
-} = Kalidokit
+const { lerp } = Vector
 
 let mpCamera: typeof c
 let mpDrawing: typeof d
@@ -46,7 +44,6 @@ const handler = ref<HTMLDivElement | undefined>()
 const liveModel = ref<HTMLCanvasElement>()
 const camView = ref<HTMLVideoElement>()
 const guideCanvas = ref<HTMLCanvasElement>()
-const showGuides = ref(false)
 const loaded = ref(false)
 
 const { style: containerStyle } = useDraggable(frame as unknown as HTMLElement, { initialValue: position })
@@ -104,7 +101,7 @@ async function initLive2D() {
 }
 // draw connectors and landmarks on output canvas
 const drawResults = (points: f.NormalizedLandmarkList) => {
-  if (!showGuides.value || !guideCanvas.value || !camView.value || !points) return
+  if (!props.showMesh || !guideCanvas.value || !camView.value || !points) return
   guideCanvas.value.width = camView.value.videoWidth
   guideCanvas.value.height = camView.value.videoHeight
   const canvasCtx = guideCanvas.value.getContext('2d')
@@ -141,7 +138,7 @@ const drawResults = (points: f.NormalizedLandmarkList) => {
 }
 
 // update live2d model internal state
-const rigFace = (result: Kalidokit.TFace|undefined, lerpAmount = 0.7) => {
+const rigFace = (result: TFace|undefined, lerpAmount = 0.7) => {
   if (!currentModel || !result) return
   const coreModel: any = currentModel.internalModel.coreModel
 
@@ -237,6 +234,8 @@ const onResults = (results: f.Results) => {
 }
 
 async function initMediapipe() {
+  if (!props.realTime)
+    return
   if (props.cdn) {
     mpFaceMesh = window as any
     mpCamera = window as any
@@ -248,11 +247,10 @@ async function initMediapipe() {
     mpDrawing = (await import('@mediapipe/drawing_utils')).default
   }
 
-  showGuides.value = props.showMesh
   const canvasCtx = guideCanvas.value!.getContext('2d')
   canvasCtx!.clearRect(0, 0, guideCanvas.value!.width, guideCanvas.value!.height)
-  guideCanvas.value!.style.visibility = showGuides.value ? 'inline' : 'none'
-  camView.value!.style.visibility = props.showCam ? 'visible' : '!invisible'
+  guideCanvas.value!.style.visibility = props.showMesh ? 'inline' : 'none'
+  camView.value!.style.visibility = props.showCam ? 'visible' : 'invisible'
 
   const faceMesh = new mpFaceMesh.FaceMesh({
     locateFile: (file) => {
@@ -292,12 +290,13 @@ function fixPosition() {
   if (position.value.y < 0)
     position.value.y = 0
 }
+
 useEventListener('resize', fixPosition)
+
 onMounted(async() => {
   fixPosition()
   await initLive2D()
-  if (props.realTime)
-    await initMediapipe()
+  await initMediapipe()
 })
 
 </script>

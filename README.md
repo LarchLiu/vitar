@@ -1,6 +1,9 @@
 # Vitar
 
 Vue live real-time avatar from your webcam in the browser. 
+
+[![npm version](https://img.shields.io/npm/v/@cloudgeek/vitar.svg?style=flat-square)](https://www.npmjs.com/package/@cloudgeek/vitar)
+[![npm downloads](https://img.shields.io/npm/dm/@cloudgeek/vitar.svg?style=flat-square)](https://www.npmjs.com/package/@cloudgeek/vitar)
 [![Image from Gyazo](https://i.gyazo.com/27e34834ad835dcd2e6fcdf9c775539a.gif)](https://gyazo.com/27e34834ad835dcd2e6fcdf9c775539a)
 ## Get Started
 
