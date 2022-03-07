@@ -1,7 +1,7 @@
 # Vitar
 
 Vue live real-time avatar from your webcam in the browser. 
-
+[![Image from Gyazo](https://i.gyazo.com/27e34834ad835dcd2e6fcdf9c775539a.gif)](https://gyazo.com/27e34834ad835dcd2e6fcdf9c775539a)
 ## Get Started
 
 #### Npm
