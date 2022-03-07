@@ -22,6 +22,7 @@ const props = defineProps({
   realTime: Boolean,
   showMesh: Boolean,
   showCam: Boolean,
+  zIndex: Number,
 })
 
 const {
@@ -33,7 +34,8 @@ let mpCamera: typeof c
 let mpDrawing: typeof d
 let mpFaceMesh: typeof f
 
-const size = useStorage('live-model-size', Math.round(Math.min(window.innerHeight, (window.innerWidth) / 8)))
+const minSize = 80
+const size = useStorage('live-model-size', Math.round(Math.max(minSize, Math.min(window.innerHeight, (window.innerWidth) / 8))))
 const position = useStorage('live-model-pos', {
   x: window.innerWidth - size.value - 30,
   y: window.innerHeight - size.value - 30,
@@ -45,11 +47,12 @@ const liveModel = ref<HTMLCanvasElement>()
 const camView = ref<HTMLVideoElement>()
 const guideCanvas = ref<HTMLCanvasElement>()
 const showGuides = ref(false)
+const loaded = ref(false)
 
 const { style: containerStyle } = useDraggable(frame as unknown as HTMLElement, { initialValue: position })
 const { isDragging: handlerDown } = useDraggable(handler as unknown as HTMLElement, {
   onMove({ x, y }) {
-    size.value = Math.max(10, Math.min(x - position.value.x, y - position.value.y) / 0.8536)
+    size.value = Math.max(minSize, Math.min(x - position.value.x, y - position.value.y) / 0.8536)
   },
 })
 
@@ -227,6 +230,8 @@ const animateLive2DModel = (points: f.NormalizedLandmarkList) => {
 }
 
 const onResults = (results: f.Results) => {
+  if (!loaded.value && results.multiFaceLandmarks[0])
+    loaded.value = true
   drawResults(results.multiFaceLandmarks[0])
   animateLive2DModel(results.multiFaceLandmarks[0])
 }
@@ -282,6 +287,10 @@ function fixPosition() {
     position.value.x = window.innerWidth - size.value - 30
   if (position.value.y >= window.innerHeight)
     position.value.y = window.innerHeight - size.value - 30
+  if (position.value.x < 0)
+    position.value.x = 0
+  if (position.value.y < 0)
+    position.value.y = 0
 }
 useEventListener('resize', fixPosition)
 onMounted(async() => {
@@ -295,8 +304,8 @@ onMounted(async() => {
 
 <template>
   <div
-    class="fixed z-10"
-    :style="containerStyle"
+    class="fixed"
+    :style="[containerStyle, {zIndex}]"
   >
     <div
       v-if="model"
@@ -311,7 +320,7 @@ onMounted(async() => {
       ref="handler"
       class="absolute bottom-0 right-0 bg-green-500 rounded-full bg-main shadow opacity-50 shadow z-30 hover:opacity-100 dark:(border border-true-gray-700)"
       :style="handleStyle"
-      :class="handlerDown ? '!opacity-100' : ''"
+      :class="[handlerDown ? '!opacity-100' : '', loaded ? 'bg-green-500' : 'bg-red-500']"
     />
     <div
       v-if="realTime"

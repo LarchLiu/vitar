@@ -30,6 +30,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  zIndex: {
+    type: Number,
+    default: 9999,
+  },
 })
 const isDev = import.meta.env.MODE === 'development'
 
@@ -107,6 +111,6 @@ watch([isLive2dLoad, isCubismLoad, isFaceMeshLoad, isCameraUtilsLoad, isDrawiing
 
 <template>
   <template v-if="Live2DLayer">
-    <Live2DLayer :model="model" :real-time="realTime" :show-cam="showCam" :show-mesh="showMesh" :cdn="!isDev" />
+    <Live2DLayer :model="model" :real-time="realTime" :show-cam="showCam" :show-mesh="showMesh" :cdn="!isDev" :z-index="zIndex" />
   </template>
 </template>

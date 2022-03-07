@@ -62,6 +62,7 @@ import '@cloudgeek/vitar/dist/index.css'
 | realTime       | boolean          | true             | whether to use mediapipe for real-time avatar.|
 | showCam        | boolean          | false            | whether to show camera view.|
 | showMesh       | boolean          | false            | whether to show mesh view.|
+| zIndex         | number           | 9999             | z-index of avatar.|
 
 ## Dev Base
 - [Vite](https://vitejs.dev) - An extremely fast frontend tooling
