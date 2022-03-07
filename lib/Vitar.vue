@@ -1,5 +1,4 @@
 <script lang="ts">
-import '@unocss/reset/tailwind.css'
 import 'uno.css'
 export default {
   name: 'Vitar',
