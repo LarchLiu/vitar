@@ -22,7 +22,7 @@ const showMesh = ref(true)
     <div py-4 />
     <nav text-xl mt-6 inline-flex gap-2>
       <button class="icon-btn !outline-none" @click="showCam = !showCam">
-        <div i-carbon-camera :class="showMesh ? '!opacity-100' : '!opacity-40'" />
+        <div i-carbon-camera :class="showCam ? '!opacity-100' : '!opacity-40'" />
       </button>
       <button class="icon-btn !outline-none" @click="showMesh = !showMesh">
         <div i-carbon-3d-print-mesh :class="showMesh ? '!opacity-100' : '!opacity-40'" />
