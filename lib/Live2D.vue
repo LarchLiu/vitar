@@ -20,7 +20,7 @@ Renderer.registerPlugin('interaction', InteractionManager)
 const props = defineProps({
   model: [Boolean, String],
   cdn: Boolean,
-  realTime: Boolean,
+  mediaPipe: Boolean,
   showMesh: Boolean,
   showCam: Boolean,
   zIndex: Number,
@@ -234,7 +234,7 @@ const onResults = (results: f.Results) => {
 }
 
 async function initMediapipe() {
-  if (!props.realTime)
+  if (!props.mediaPipe)
     return
   if (props.cdn) {
     mpFaceMesh = window as any
@@ -292,12 +292,12 @@ function fixPosition() {
 }
 
 watch(() => props.showCam, () => {
-  if (props.realTime)
+  if (props.mediaPipe)
     camView.value!.style.visibility = props.showCam ? 'visible' : 'hidden'
 })
 
 watch(() => props.showMesh, () => {
-  if (props.realTime) {
+  if (props.mediaPipe) {
     const canvasCtx = guideCanvas.value!.getContext('2d')
     canvasCtx!.clearRect(0, 0, guideCanvas.value!.width, guideCanvas.value!.height)
     guideCanvas.value!.style.visibility = props.showMesh ? 'inline' : 'none'
@@ -335,7 +335,7 @@ onMounted(async() => {
       :class="[handlerDown ? '!opacity-100' : '', loaded ? 'bg-green-500' : 'bg-red-500']"
     />
     <div
-      v-if="realTime"
+      v-if="mediaPipe"
       class="absolute bottom-0"
       style="transform: rotateY(180deg);"
       :style="[frameStyle, {right: `${size}px`}]"

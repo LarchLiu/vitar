@@ -18,7 +18,7 @@ const props = defineProps({
     type: [Boolean, String],
     default: true,
   },
-  realTime: {
+  mediaPipe: {
     type: Boolean,
     default: true,
   },
@@ -40,15 +40,15 @@ const isDev = import.meta.env.MODE === 'development'
 const vm = getCurrentInstance()!
 
 async function create() {
-  if (props.realTime || props.model)
+  if (props.mediaPipe || props.model)
     import('./Live2D.vue').then(v => Live2DLayer.value = v.default)
 }
 
-if (props.realTime && (window as any).FaceMesh && (window as any).Camera && (window as any).drawConnectors && (window as any).Live2D && (window as any).Live2DCubismCore) {
+if (props.mediaPipe && (window as any).FaceMesh && (window as any).Camera && (window as any).drawConnectors && (window as any).Live2D && (window as any).Live2DCubismCore) {
   onMounted(create)
 }
 else {
-  if (props.realTime && !isDev && (!(window as any).FaceMesh || !(window as any).Camera || !(window as any).drawConnectors)) {
+  if (props.mediaPipe && !isDev && (!(window as any).FaceMesh || !(window as any).Camera || !(window as any).drawConnectors)) {
     useScriptTag(
       'https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js',
       () => {
@@ -111,6 +111,6 @@ watch([isLive2dLoad, isCubismLoad, isFaceMeshLoad, isCameraUtilsLoad, isDrawiing
 
 <template>
   <template v-if="Live2DLayer">
-    <Live2DLayer :model="model" :real-time="realTime" :show-cam="showCam" :show-mesh="showMesh" :cdn="!isDev" :z-index="zIndex" />
+    <Live2DLayer :model="model" :media-pipe="mediaPipe" :show-cam="showCam" :show-mesh="showMesh" :cdn="!isDev" :z-index="zIndex" />
   </template>
 </template>

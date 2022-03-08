@@ -62,7 +62,7 @@ import '@cloudgeek/vitar/dist/index.css'
 | Name           | Type             | Default          | Description |
 | -------------- | :--------------: | :--------------: | -------------- |
 | model          | boolean \| string| true             | true: use default model of hiyori, false: don't show model, string: url of model.|
-| realTime       | boolean          | true             | whether to use mediapipe for real-time avatar.|
+| mediaPipe       | boolean         | true             | whether to use mediapipe for real-time avatar.|
 | showCam        | boolean          | false            | whether to show camera view.|
 | showMesh       | boolean          | false            | whether to show mesh view.|
 | zIndex         | number           | 9999             | z-index of avatar.|
