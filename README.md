@@ -66,6 +66,7 @@ import '@cloudgeek/vitar/dist/index.css'
 | showCam        | boolean          | false            | whether to show camera view.|
 | showMesh       | boolean          | false            | whether to show mesh view.|
 | zIndex         | number           | 9999             | z-index of avatar.|
+| display         | object           | {scale: 2, offsetX:0, offsetY: 0} | model display info of position and scale.|
 
 ## Dev Base
 - [Vite](https://vitejs.dev) - An extremely fast frontend tooling

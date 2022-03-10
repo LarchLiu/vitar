@@ -24,6 +24,7 @@ const props = defineProps({
   showMesh: Boolean,
   showCam: Boolean,
   zIndex: Number,
+  display: Object,
 })
 
 const { lerp } = Vector
@@ -43,8 +44,14 @@ const frame = ref<HTMLDivElement | undefined>()
 const handler = ref<HTMLDivElement | undefined>()
 const liveModel = ref<HTMLCanvasElement>()
 const camView = ref<HTMLVideoElement>()
-const guideCanvas = ref<HTMLCanvasElement>()
+const meshView = ref<HTMLCanvasElement>()
 const loaded = ref(false)
+const modelSize = ref(0)
+const display = reactive({
+  scale: 0,
+  offsetX: 0,
+  offsetY: 0,
+})
 
 const { style: containerStyle } = useDraggable(frame as unknown as HTMLElement, { initialValue: position })
 const { isDragging: handlerDown } = useDraggable(handler as unknown as HTMLElement, {
@@ -69,44 +76,61 @@ const handleStyle = computed(() => ({
 
 // const modelUrl = '/models/hiyori/hiyori_pro_t10.model3.json'
 let currentModel: any
+let pixiApp: Application
 const modelUrl = computed(() =>
   typeof props.model === 'string'
     ? props.model
-    : (props.model ? 'https://yeemachine.github.io/kalidoface-live2d-models/Demo/4.0/hiyori/hiyori_free_t06.model3.json' : props.model),
+    : (props.model ? 'https://raw.githubusercontent.com/Live2D/CubismWebSamples/develop/Samples/Resources/Hiyori/Hiyori.model3.json' : props.model),
 )
+const setDisplay = () => {
+  const scale = Math.max(0.1, display.scale / 10)
+  const offsetX = (scale - 1) / 2 - display.offsetX / 20
+  const offsetY = display.offsetY / 20
+  if (currentModel) {
+    currentModel.scale.set(scale)
+    currentModel.x = -modelSize.value * offsetX
+    currentModel.y = -modelSize.value * offsetY
+  }
+}
+const initDisplay = () => {
+  display.scale = props.display!.scale * 10
+  display.offsetX = props.display!.offsetX
+  display.offsetY = props.display!.offsetY
+  setDisplay()
+}
+
 async function initLive2D() {
   if (modelUrl.value) {
     currentModel = await Live2DModel.from(modelUrl.value, { autoInteract: false })
     const { width, height } = currentModel
+    modelSize.value = Math.min(width, height)
 
-    const a = new Application({
+    pixiApp = new Application({
       backgroundAlpha: 0,
       autoStart: true,
-      width: width / 2,
-      height: height / 3,
+      width: modelSize.value,
+      height: modelSize.value,
       view: liveModel.value,
     })
 
-    a.stage.addChild(currentModel)
-
-    currentModel.scale.set(1)
-    currentModel.x = -width / 4
+    pixiApp.stage.addChild(currentModel)
+    initDisplay()
     currentModel.buttonMode = true
     currentModel.interactive = true
 
-    currentModel.on('pointerdown', () => {
-      // camView.value.style.visibility = showGuides.value ? 'visible' : 'hidden';
-    })
+    // currentModel.on('pointerdown', () => {
+    //   // camView.value.style.visibility = showGuides.value ? 'visible' : 'hidden';
+    // })
   }
 }
 // draw connectors and landmarks on output canvas
 const drawResults = (points: f.NormalizedLandmarkList) => {
-  if (!props.showMesh || !guideCanvas.value || !camView.value || !points) return
-  guideCanvas.value.width = camView.value.videoWidth
-  guideCanvas.value.height = camView.value.videoHeight
-  const canvasCtx = guideCanvas.value.getContext('2d')
+  if (!props.showMesh || !meshView.value || !camView.value || !points) return
+  meshView.value.width = camView.value.videoWidth
+  meshView.value.height = camView.value.videoHeight
+  const canvasCtx = meshView.value.getContext('2d')
   canvasCtx!.save()
-  canvasCtx!.clearRect(0, 0, guideCanvas.value.width, guideCanvas.value.height)
+  canvasCtx!.clearRect(0, 0, meshView.value.width, meshView.value.height)
   // Use `Mediapipe` drawing functions
   mpDrawing.drawConnectors(canvasCtx!, points, mpFaceMesh.FACEMESH_TESSELATION, {
     color: '#C0C0C070',
@@ -247,9 +271,9 @@ async function initMediapipe() {
     mpDrawing = (await import('@mediapipe/drawing_utils')).default
   }
 
-  const canvasCtx = guideCanvas.value!.getContext('2d')
-  canvasCtx!.clearRect(0, 0, guideCanvas.value!.width, guideCanvas.value!.height)
-  guideCanvas.value!.style.visibility = props.showMesh ? 'inline' : 'none'
+  const canvasCtx = meshView.value!.getContext('2d')
+  canvasCtx!.clearRect(0, 0, meshView.value!.width, meshView.value!.height)
+  meshView.value!.style.visibility = props.showMesh ? 'inline' : 'none'
   camView.value!.style.visibility = props.showCam ? 'visible' : 'hidden'
 
   const faceMesh = new mpFaceMesh.FaceMesh({
@@ -298,10 +322,26 @@ watch(() => props.showCam, () => {
 
 watch(() => props.showMesh, () => {
   if (props.mediaPipe) {
-    const canvasCtx = guideCanvas.value!.getContext('2d')
-    canvasCtx!.clearRect(0, 0, guideCanvas.value!.width, guideCanvas.value!.height)
-    guideCanvas.value!.style.visibility = props.showMesh ? 'inline' : 'none'
+    const canvasCtx = meshView.value!.getContext('2d')
+    canvasCtx!.clearRect(0, 0, meshView.value!.width, meshView.value!.height)
+    meshView.value!.style.visibility = props.showMesh ? 'inline' : 'none'
   }
+})
+
+watch(() => props.model, async() => {
+  if (pixiApp && currentModel) {
+    pixiApp.destroy()
+    currentModel = null
+    await initLive2D()
+  }
+})
+
+watch(() => props.display, () => {
+  initDisplay()
+})
+
+watch(display, () => {
+  setDisplay()
 })
 
 useEventListener('resize', fixPosition)
@@ -340,8 +380,37 @@ onMounted(async() => {
       style="transform: rotateY(180deg);"
       :style="[frameStyle, {right: `${size}px`}]"
     >
+      <div v-if="showMesh && size > 120" class="absolute top-0 right-0 w-full h-auto" style="transform: rotateY(180deg);">
+        <div>
+          {{ `scale: ${Math.max(0.1, display.scale / 10)}` }}
+          <button @click="display.scale++">
+            +
+          </button>
+          <button @click="display.scale--">
+            -
+          </button>
+        </div>
+        <div>
+          {{ `offsetX: ${display.offsetX}` }}
+          <button @click="display.offsetX++">
+            +
+          </button>
+          <button @click="display.offsetX--">
+            -
+          </button>
+        </div>
+        <div>
+          {{ `offsetY: ${display.offsetY}` }}
+          <button @click="display.offsetY++">
+            +
+          </button>
+          <button @click="display.offsetY--">
+            -
+          </button>
+        </div>
+      </div>
       <video ref="camView" class="absolute bottom-0 left-0 w-full h-auto" />
-      <canvas ref="guideCanvas" class="absolute bottom-0 left-0 w-full h-auto" />
+      <canvas ref="meshView" class="absolute bottom-0 left-0 w-full h-auto" />
     </div>
   </div>
 </template>

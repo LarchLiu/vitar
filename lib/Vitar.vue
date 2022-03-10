@@ -34,6 +34,16 @@ const props = defineProps({
     type: Number,
     default: 9999,
   },
+  display: {
+    type: Object,
+    default() {
+      return {
+        scale: 2,
+        offsetX: 0,
+        offsetY: 0,
+      }
+    },
+  },
 })
 const isDev = import.meta.env.MODE === 'development'
 
@@ -111,6 +121,9 @@ watch([isLive2dLoad, isCubismLoad, isFaceMeshLoad, isCameraUtilsLoad, isDrawiing
 
 <template>
   <template v-if="Live2DLayer">
-    <Live2DLayer :model="model" :media-pipe="mediaPipe" :show-cam="showCam" :show-mesh="showMesh" :cdn="!isDev" :z-index="zIndex" />
+    <Live2DLayer
+      :model="model" :media-pipe="mediaPipe" :show-cam="showCam"
+      :show-mesh="showMesh" :cdn="!isDev" :z-index="zIndex" :display="display"
+    />
   </template>
 </template>
