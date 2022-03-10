@@ -34,7 +34,7 @@ const setModel = (name: string) => {
       <em text-sm op75>Live real-time avatar</em>
     </p>
 
-    <div mt-6 inline-flex gap-2>
+    <div mt-6 flex justify="center" gap-2>
       <button v-for="name in models" :key="name" class="btn" @click="setModel(name)">
         {{ name }}
       </button>
