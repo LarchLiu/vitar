@@ -4,7 +4,7 @@ import path from 'path'
 import { defineConfig } from 'vite'
 import Vue from '@vitejs/plugin-vue'
 import AutoImport from 'unplugin-auto-import/vite'
-import Unocss from 'unocss/vite'
+import injectCss from 'vite-plugin-css-injected-by-js'
 
 export default defineConfig({
   resolve: {
@@ -23,14 +23,11 @@ export default defineConfig({
       ],
       dts: true,
     }),
-
-    // https://github.com/antfu/unocss
-    // see unocss.config.ts for config
-    Unocss(),
+    injectCss(),
   ],
 
   build: {
-    cssCodeSplit: true,
+    cssCodeSplit: false,
     lib: {
       entry: path.resolve(__dirname, 'lib/index.ts'),
       name: 'Vitar',

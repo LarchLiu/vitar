@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import { Live2DModel } from 'pixi-live2d-display'
 import { Application } from '@pixi/app'
-import { Renderer } from '@pixi/core'
 import { Ticker, TickerPlugin } from '@pixi/ticker'
-import { InteractionManager } from '@pixi/interaction'
 import type { TFace } from 'kalidokit'
 import { Face, Vector } from 'kalidokit'
 import type * as c from '@mediapipe/camera_utils'
@@ -13,9 +11,6 @@ import type * as f from '@mediapipe/face_mesh'
 // register the Ticker to support automatic updating of Live2D models
 Application.registerPlugin(TickerPlugin)
 Live2DModel.registerTicker(Ticker)
-
-// // register the InteractionManager to support automatic interaction of Live2D models
-Renderer.registerPlugin('interaction', InteractionManager)
 
 const props = defineProps({
   model: [Boolean, String],
@@ -356,61 +351,132 @@ onMounted(async() => {
 
 <template>
   <div
-    class="fixed"
+    class="container"
     :style="[containerStyle, {zIndex}]"
   >
     <div
       v-if="model"
       ref="frame"
-      class="rounded-full shadow bg-gray-400 bg-opacity-10 overflow-hidden object-cover"
+      class="frame"
       :style="frameStyle"
     >
-      <canvas ref="liveModel" class="object-cover min-w-full min-h-full rounded-full" :style="frameStyle" />
+      <canvas ref="liveModel" class="model" :style="frameStyle" />
     </div>
     <div
       v-if="model"
       ref="handler"
-      class="absolute bottom-0 right-0 bg-green-500 rounded-full bg-main shadow opacity-50 shadow z-30 hover:opacity-100 dark:(border border-true-gray-700)"
+      class="handler"
       :style="handleStyle"
-      :class="[handlerDown ? '!opacity-100' : '', loaded ? 'bg-green-500' : 'bg-red-500']"
+      :class="[handlerDown ? 'opacity-full' : '', loaded ? 'bg-green' : 'bg-red']"
     />
     <div
       v-if="mediaPipe"
-      class="absolute bottom-0"
+      class="media-pipe"
       style="transform: rotateY(180deg);"
       :style="[frameStyle, {right: `${size}px`}]"
     >
-      <div v-if="showMesh && size > 120" class="absolute top-0 right-0 w-full h-auto" style="transform: rotateY(180deg);">
-        <div>
-          {{ `scale: ${Math.max(0.1, display.scale / 10)}` }}
-          <button @click="display.scale++">
-            +
-          </button>
-          <button @click="display.scale--">
-            -
-          </button>
-        </div>
-        <div>
-          {{ `offsetX: ${display.offsetX}` }}
-          <button @click="display.offsetX++">
-            +
-          </button>
-          <button @click="display.offsetX--">
-            -
-          </button>
-        </div>
-        <div>
-          {{ `offsetY: ${display.offsetY}` }}
-          <button @click="display.offsetY++">
-            +
-          </button>
-          <button @click="display.offsetY--">
-            -
-          </button>
-        </div>
+      <video ref="camView" class="camera" />
+      <canvas ref="meshView" class="mesh" />
+    </div>
+    <div
+      v-if="mediaPipe && showMesh && size > 120"
+      class="panel" :style="[frameStyle, {zIndex: zIndex! + 1, right: `${size}px`}]"
+    >
+      <div>
+        s:
+        <button class="vitar-btn" @click="display.scale--">
+          -
+        </button>
+        <button class="vitar-btn" @click="display.scale++">
+          +
+        </button>
+        {{ `${Math.max(0.1, display.scale / 10)}` }}
       </div>
-      <video ref="camView" class="absolute bottom-0 left-0 w-full h-auto" />
-      <canvas ref="meshView" class="absolute bottom-0 left-0 w-full h-auto" />
+      <div>
+        x:
+        <button class="vitar-btn" @click="display.offsetX--">
+          -
+        </button>
+        <button class="vitar-btn" @click="display.offsetX++">
+          +
+        </button>
+        {{ `${display.offsetX}` }}
+      </div>
+      <div>
+        y:
+        <button class="vitar-btn" @click="display.offsetY--">
+          -
+        </button>
+        <button class="vitar-btn" @click="display.offsetY++">
+          +
+        </button>
+        {{ `${display.offsetY}` }}
+      </div>
     </div>
   </div>
 </template>
+<style scoped>
+.container {
+  position: fixed;
+}
+.frame {
+  overflow: hidden;
+  --tw-shadow-color: 0, 0, 0;
+  --tw-shadow: 0 1px 3px 0 rgba(var(--tw-shadow-color), 0.1), 0 1px 2px 0 rgba(var(--tw-shadow-color), 0.06);
+  --tw-bg-opacity: 0.1;
+  background-color: rgba(156, 163, 175, var(--tw-bg-opacity));
+  -webkit-box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+  border-radius: 9999px;
+  -o-object-fit: cover;
+  object-fit: cover;
+}
+.model {
+  -o-object-fit: cover;
+  object-fit: cover;
+  min-width: 100%;
+  min-height: 100%;
+  border-radius: 9999px;
+}
+.handler {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  --tw-shadow-color: 0, 0, 0;
+  --tw-shadow: 0 1px 3px 0 rgba(var(--tw-shadow-color), 0.1), 0 1px 2px 0 rgba(var(--tw-shadow-color), 0.06);
+  -webkit-box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+  border-radius: 9999px;
+  opacity: 0.5;
+}
+.opacity-full,
+.handler:hover {
+  opacity: 1;
+}
+.bg-green {
+  background-color: rgba(16, 185, 129);
+}
+.bg-red {
+  background-color: rgba(239, 68, 68);
+}
+.media-pipe {
+  position: absolute;
+  bottom: 0;
+}
+.panel {
+  position: absolute;
+  text-align: left;
+  top: 0;
+}
+.camera,
+.mesh {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: auto;
+}
+.vitar-btn {
+  margin-right: 0.25rem;
+}
+</style>

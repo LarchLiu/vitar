@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { Vitar } from '@cloudgeek/vitar'
 import { isDark, toggleDark } from '~/composables'
-import '@cloudgeek/vitar/dist/index.css'
 
 const showCam = ref(false)
 const showMesh = ref(true)

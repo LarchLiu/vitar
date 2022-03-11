@@ -1,5 +1,4 @@
 <script lang="ts">
-import 'uno.css'
 export default {
   name: 'Vitar',
   inheritAttrs: false,

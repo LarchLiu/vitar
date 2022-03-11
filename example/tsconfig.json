@@ -15,12 +15,11 @@
     "forceConsistentCasingInFileNames": true,
     "types": [
       "vite/client",
+      "vite-plugin-pages/client"
     ],
     "paths": {
       "~/*": ["src/*"]
     },
-    "outDir": "dist",
-    "declaration": true,
   },
-  "exclude": ["dist", "example", "node_modules"]
+  "exclude": ["dist", "node_modules"]
 }

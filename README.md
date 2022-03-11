@@ -32,7 +32,6 @@ $ pnpm i @cloudgeek/vitar
 ```js
 // main.js
 import Vitar from '@cloudgeek/vitar'
-import '@cloudgeek/vitar/dist/index.css'
 
 const app = createApp(App)
 
@@ -49,7 +48,6 @@ app.use(Vitar).mount('#app')
 // your component
 <script setup>
 import { Vitar } from '@cloudgeek/vitar'
-import '@cloudgeek/vitar/dist/index.css'
 </script>
 
 <template>
