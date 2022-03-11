@@ -1,6 +1,6 @@
 {
   "name": "@cloudgeek/vitar",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "private": false,
   "description": "Live real-time avatar",
   "bugs": "https://github.com/LarchLiu/vitar/issues",
