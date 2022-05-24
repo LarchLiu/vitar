@@ -17,11 +17,12 @@ const setModel = (name: string) => {
     offsetX.value = 0
 }
 </script>
+
 <template>
   <main font-sans p="x-4 y-10" text="center gray-700 dark:gray-200">
     <vitar
       :show-mesh="showMesh" :z-index="zIndex" :show-cam="showCam" :model="model"
-      :media-pipe="mediaPipe" :display="{scale, offsetX, offsetY}"
+      :media-pipe="mediaPipe" :display="{ scale, offsetX, offsetY }"
     />
     <button class="btn" m="4" @click="showCam = !showCam">
       show camera
@@ -56,6 +57,7 @@ const setModel = (name: string) => {
     </div>
   </main>
 </template>
+
 <style>
 .btn {
   padding: 0.25rem 1rem;

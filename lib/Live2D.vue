@@ -8,10 +8,6 @@ import type * as c from '@mediapipe/camera_utils'
 import type * as d from '@mediapipe/drawing_utils'
 import type * as f from '@mediapipe/face_mesh'
 
-// register the Ticker to support automatic updating of Live2D models
-Application.registerPlugin(TickerPlugin)
-Live2DModel.registerTicker(Ticker)
-
 const props = defineProps({
   model: [Boolean, String],
   cdn: Boolean,
@@ -21,6 +17,10 @@ const props = defineProps({
   zIndex: Number,
   display: Object,
 })
+
+// register the Ticker to support automatic updating of Live2D models
+Application.registerPlugin(TickerPlugin)
+Live2DModel.registerTicker(Ticker)
 
 const { lerp } = Vector
 
@@ -120,7 +120,8 @@ async function initLive2D() {
 }
 // draw connectors and landmarks on output canvas
 const drawResults = (points: f.NormalizedLandmarkList) => {
-  if (!props.showMesh || !meshView.value || !camView.value || !points) return
+  if (!props.showMesh || !meshView.value || !camView.value || !points)
+    return
   meshView.value.width = camView.value.videoWidth
   meshView.value.height = camView.value.videoHeight
   const canvasCtx = meshView.value.getContext('2d')
@@ -157,8 +158,9 @@ const drawResults = (points: f.NormalizedLandmarkList) => {
 }
 
 // update live2d model internal state
-const rigFace = (result: TFace|undefined, lerpAmount = 0.7) => {
-  if (!currentModel || !result) return
+const rigFace = (result: TFace | undefined, lerpAmount = 0.7) => {
+  if (!currentModel || !result)
+    return
   const coreModel: any = currentModel.internalModel.coreModel
 
   currentModel.internalModel.motionManager.update = () => {
@@ -231,7 +233,8 @@ const rigFace = (result: TFace|undefined, lerpAmount = 0.7) => {
 }
 
 const animateLive2DModel = (points: f.NormalizedLandmarkList) => {
-  if (!currentModel || !points) return
+  if (!currentModel || !points)
+    return
 
   let riggedFace
 
@@ -289,7 +292,7 @@ async function initMediapipe() {
   faceMesh.onResults(onResults)
 
   const camera = new mpCamera.Camera(camView.value!, {
-    onFrame: async() => {
+    onFrame: async () => {
       await faceMesh.send({ image: camView.value! })
     },
     width: 640,
@@ -323,7 +326,7 @@ watch(() => props.showMesh, () => {
   }
 })
 
-watch(() => props.model, async() => {
+watch(() => props.model, async () => {
   if (pixiApp && currentModel) {
     pixiApp.destroy()
     currentModel = null
@@ -341,18 +344,17 @@ watch(display, () => {
 
 useEventListener('resize', fixPosition)
 
-onMounted(async() => {
+onMounted(async () => {
   fixPosition()
   await initLive2D()
   await initMediapipe()
 })
-
 </script>
 
 <template>
   <div
     class="container"
-    :style="[containerStyle, {zIndex}]"
+    :style="[containerStyle, { zIndex }]"
   >
     <div
       v-if="model"
@@ -373,14 +375,14 @@ onMounted(async() => {
       v-if="mediaPipe"
       class="media-pipe"
       style="transform: rotateY(180deg);"
-      :style="[frameStyle, {right: `${size}px`}]"
+      :style="[frameStyle, { right: `${size}px` }]"
     >
       <video ref="camView" class="camera" />
       <canvas ref="meshView" class="mesh" />
     </div>
     <div
       v-if="mediaPipe && showMesh && size > 120"
-      class="panel" :style="[frameStyle, {zIndex: zIndex! + 1, right: `${size}px`}]"
+      class="panel" :style="[frameStyle, { zIndex: zIndex! + 1, right: `${size}px` }]"
     >
       <div>
         s:
@@ -415,6 +417,7 @@ onMounted(async() => {
     </div>
   </div>
 </template>
+
 <style scoped>
 .container {
   position: fixed;

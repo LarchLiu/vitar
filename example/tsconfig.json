@@ -13,13 +13,14 @@
     "noUnusedLocals": true,
     "strictNullChecks": true,
     "forceConsistentCasingInFileNames": true,
+    "jsx": "preserve",
     "types": [
       "vite/client",
       "vite-plugin-pages/client"
     ],
     "paths": {
       "~/*": ["src/*"]
-    },
+    }
   },
   "exclude": ["dist", "node_modules"]
 }

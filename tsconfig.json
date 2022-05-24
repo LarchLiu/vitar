@@ -13,14 +13,15 @@
     "noUnusedLocals": true,
     "strictNullChecks": true,
     "forceConsistentCasingInFileNames": true,
+    "jsx": "preserve",
     "types": [
-      "vite/client",
+      "vite/client"
     ],
     "paths": {
       "~/*": ["src/*"]
     },
     "outDir": "dist",
-    "declaration": true,
+    "declaration": true
   },
   "exclude": ["dist", "example", "node_modules"]
 }

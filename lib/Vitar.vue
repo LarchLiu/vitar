@@ -4,14 +4,8 @@ export default {
   inheritAttrs: false,
 }
 </script>
-<script setup lang="ts">
-const isLive2dLoad = ref(false)
-const isCubismLoad = ref(false)
-const isFaceMeshLoad = ref(false)
-const isCameraUtilsLoad = ref(false)
-const isDrawiingUtilsLoad = ref(false)
-const Live2DLayer = shallowRef<any>()
 
+<script setup lang="ts">
 const props = defineProps({
   model: {
     type: [Boolean, String],
@@ -44,6 +38,13 @@ const props = defineProps({
     },
   },
 })
+const isLive2dLoad = ref(false)
+const isCubismLoad = ref(false)
+const isFaceMeshLoad = ref(false)
+const isCameraUtilsLoad = ref(false)
+const isDrawiingUtilsLoad = ref(false)
+const Live2DLayer = shallowRef<any>()
+
 const isDev = import.meta.env.MODE === 'development'
 
 const vm = getCurrentInstance()!
