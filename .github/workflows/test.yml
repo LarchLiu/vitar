@@ -40,7 +40,7 @@ jobs:
         run: npm i -g pnpm @antfu/ni
 
       - name: Install
-        run: nci
+        run: ni
         env:
           CYPRESS_INSTALL_BINARY: 0
 
