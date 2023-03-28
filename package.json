@@ -12,16 +12,17 @@
     "real-time"
   ],
   "license": "MIT",
+  "author": "alex <larch.liu@gmail.com>",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/LarchLiu/vitar.git"
   },
-  "author": "alex <larch.liu@gmail.com>",
+  "main": "dist/vitar.cjs.js",
+  "module": "dist/vitar.es.js",
+  "types": "./dist/types/index.d.ts",
   "files": [
     "dist"
   ],
-  "main": "dist/vitar.cjs.js",
-  "module": "dist/vitar.es.js",
   "scripts": {
     "ci:publish": "zx scripts/publish.mjs",
     "dev": "vite --port 3333 --open --host",
@@ -31,7 +32,6 @@
     "release": "zx scripts/release.mjs",
     "test": "vitest"
   },
-  "types": "./dist/types/index.d.ts",
   "style": "./dist/index.css",
   "dependencies": {
     "@mediapipe/camera_utils": "^0.3.1632432234",

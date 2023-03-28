@@ -93,14 +93,14 @@ else {
       () => {
         isLive2dLoad.value = true
       },
-      { async: true },
+      { async: true, crossOrigin: 'anonymous' },
     )
     useScriptTag(
       'https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js',
       () => {
         isCubismLoad.value = true
       },
-      { async: true },
+      { async: true, crossOrigin: 'anonymous' },
     )
   }
   else {
